@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">TravelApp</string>
+    <string name="button_tempConv">TEMPERATURE CONVERTER</string>
+    <string name="button_currConv">CURRENCY CONVERTER</string>
+    <string name="button_emailFriend">EMAIL FRIEND</string>
+    <string name="title_activity_temp_converter">Temperature Converter</string>
+    <string name="title_activity_currency_converter">Currency Converter</string>
+    <string name="title_activity_email">Send Email</string>
+    <string name="radio_toFahren">to Fahrenheit</string>
+    <string name="radio_toCelsius">to Celsius</string>
+    <string name="button_convert">CONVERT</string>
+    <string name="button_clear">CLEAR</string>
+
+    <string name="hey">Hey</string>
+    <string name="im_going_to">I\'m going to</string>
+    <string name="implement_the_interface_here">implement the interface here</string>
+
+</resources>
