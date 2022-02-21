@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         // TODO findviewbyid for the UI elements
         val encrypt_button: Button = findViewById(R.id.encrypt_button)
+        val downloadShells_button: Button = findViewById(R.id.getshell_button)
 
         // TODO set onClickListeners to all the buttons here
         //  or declare the onclick method within the layout XML?
@@ -59,6 +60,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             setContentView(R.layout.activity_encrypt)
         }
-    }
 
+        downloadShells_button.setOnClickListener {
+            val intent = Intent(this, DownloadShells::class.java)
+            startActivity(intent)
+            setContentView(R.layout.activity_getshell)
+        }
+    }
 }

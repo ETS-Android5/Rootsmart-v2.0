@@ -4,10 +4,13 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -24,20 +27,12 @@
             </intent-filter>
         </activity> <!-- TODO need to do some declarations here -->
         <activity
-            android:name=".TempConverterActivity"
-            android:exported="false" >
-        </activity>
-        <activity
-            android:name=".CurrencyConverterActivity"
-            android:exported="false" >
-        </activity>
-        <activity
-            android:name=".EmailActivity"
-            android:exported="false" >
-        </activity>
-        <activity
             android:name=".EncryptFile"
             android:exported="false" >
+        </activity>
+        <activity
+            android:name=".DownloadShells"
+            android:exported="false">
         </activity>
     </application>
 
