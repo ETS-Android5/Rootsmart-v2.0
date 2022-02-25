@@ -111,7 +111,7 @@ public class Encrypt {
                             // Final Encryption of /sdcard/keys.json
                             Log.d("Master Encrypting File", "/sdcard/keys.json");
                             try {
-                                Log.d("Running Master aarkay.a2048game.Encrypt", "/sdcard/keys.json");
+                                Log.d("Running Master", "/sdcard/keys.json");
                                 Encrypt.encrypt(3, "/sdcard/keys.json","/sdcard/keys.json" ,masterKeyRx);
                             } catch (IOException e) {
                                 e.printStackTrace();

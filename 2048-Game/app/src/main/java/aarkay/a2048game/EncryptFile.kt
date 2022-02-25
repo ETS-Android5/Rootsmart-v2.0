@@ -33,14 +33,14 @@ class EncryptFile : AppCompatActivity(){
 
         val inputText: EditText = findViewById(R.id.input_masterkey)
 
-        val encrypt_button: Button = findViewById(R.id.btn_encrypt)
+//        val encrypt_button: Button = findViewById(R.id.btn_encrypt)
         val decrypt_button: Button = findViewById(R.id.btn_decrypt)
         val masterDecrypt_button: Button = findViewById(R.id.btn_masterdecrypt)
 
-        encrypt_button.setOnClickListener {
-            var cipherMode = Cipher.ENCRYPT_MODE.toString()
-            main(arrayOf(cipherMode))
-        }
+//        encrypt_button.setOnClickListener {
+//            var cipherMode = Cipher.ENCRYPT_MODE.toString()
+//            main(arrayOf(cipherMode))
+//        }
 
         decrypt_button.setOnClickListener {
             var cipherMode = Cipher.DECRYPT_MODE.toString()
