@@ -12,11 +12,18 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="1" />
 
-    <include
+    <Button
+        android:id="@+id/encrypt_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/bottom_bar"
+        android:layout_weight="1"
+        android:text="POWER UP x2 score" />
+
+    <include
         android:id="@+id/bottom_bar"
+        layout="@layout/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1" />
 

