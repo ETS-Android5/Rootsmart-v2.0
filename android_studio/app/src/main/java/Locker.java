@@ -1,3 +1,5 @@
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,12 +22,14 @@ public class Locker {
 
     // Decryption method
     public static void decrypt(String key, File inFile, File outFile) throws Exception {
+        Log.d("Inside decrypt key:", key);
         lock(Cipher.DECRYPT_MODE, key, inFile, outFile);
     }
 
     // Lock method will take in file and encrypt/decrypt based on cipherMode
     private static void lock(int cipherMode, String key, File inFile, File outFile) throws Exception {
         try {
+            Log.d("Inside Lock", key);
             Key skey = new SecretKeySpec(key.getBytes(), "AES"); // Create secretkey
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(cipherMode, skey);

