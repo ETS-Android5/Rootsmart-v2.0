@@ -16,4 +16,6 @@
 #   public *;
 #}
 
+-flattenpackagehierarchy 'aarkay.a2048game'
+
 
