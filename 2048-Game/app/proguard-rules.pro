@@ -16,6 +16,7 @@
 #   public *;
 #}
 
--flattenpackagehierarchy 'aarkay.a2048game'
+-repackageclasses 'V2tWb1MwNVhSa2hTYm14aFVqRmFOUT09'
+-overloadaggressively
 
 
