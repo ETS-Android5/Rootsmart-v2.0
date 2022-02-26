@@ -43,5 +43,5 @@ dependencies {
     implementation 'com.googlecode.json-simple:json-simple:1.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.github.vestrel00:contacts-android:0.1.10'
-    implementation 'khttp:khttp:0.1.0'
+    //implementation 'khttp:khttp:0.1.0'
 }

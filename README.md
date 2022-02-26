@@ -1,7 +1,7 @@
 # Rootsmart 2.0 w/ cve-2019-2215 + Ransomware
 
 Disclaimer:
-This project is solely for educational purposes. 
+This project is solely for educational purposes. This project utilise code from [rkshrksh/2048-Game](https://github.com/rkshrksh/2048-Game).
 
 Attack Vector:
 
