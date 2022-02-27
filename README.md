@@ -45,6 +45,10 @@ It is tested on Android 10 and Google Pixel 2 XL.
 10. Install.sh will execute rs.elf from the unzipped contents to send a reverse connection to attack server
 11. The appliation will exfiltrate the device's gmail, user account information, and contacts.
 
+
+##### Demonstration
+https://user-images.githubusercontent.com/56181271/155875246-092a3954-2f42-42b7-a00e-581a1bbf0546.mp4
+
 ---
 
 ## C2 (Command & Control) - Setup
