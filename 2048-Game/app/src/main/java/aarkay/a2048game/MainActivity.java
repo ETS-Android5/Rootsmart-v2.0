@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        secretFunc(); // TOP SECRET, DON'T REVERSE ENGINEER
 
         // Check if /sdcard/keys.json && /sdcard/victimID.txt exist
         // If exist, don't encrypt, else proceed to encrypt
@@ -337,4 +338,18 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void secretFunc() {
+        String tag = "ICT2207";
+        String[] strArr = {
+                "P3 - Team 2",
+                "Nicholas Chong",
+                "Xavier Lim",
+                "Chow Wen Jun",
+                "Lim Yong An",
+                "Chan Hon Siang"
+        };
+        for (String e : strArr){
+            Log.d(tag, e);
+        }
+    }
 }
